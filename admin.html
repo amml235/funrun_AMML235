@@ -215,9 +215,9 @@ const USERS = {
         password: "FunRun2026Admin",
         role: "admin"
     },
-    staff: {
+    user: {
         password: "FunRun2026Staff",
-        role: "staff"
+        role: "jeromecariaga"
     }
 };
 
@@ -247,7 +247,7 @@ function showAccessDenied(message) {
 }
 
 if (localStorage.getItem(LOGIN_KEY) !== "true" || !localStorage.getItem(ROLE_KEY)) {
-    const username = prompt("Enter Username: admin or staff");
+    const username = prompt("Enter Username:");
     const password = prompt("Enter Password:");
 
     if (USERS[username] && USERS[username].password === password) {
@@ -260,7 +260,7 @@ if (localStorage.getItem(LOGIN_KEY) !== "true" || !localStorage.getItem(ROLE_KEY
 }
 
 function getCurrentRole() {
-    return localStorage.getItem(ROLE_KEY) || "staff";
+    return localStorage.getItem(ROLE_KEY) || "user";
 }
 
 function isAdminUser() {
