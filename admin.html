@@ -212,11 +212,11 @@ pre {
 <script>
 const USERS = {
     admin: {
-        password: "FunRun2026Admin",
+        password: "admin12345",
         role: "admin"
     },
     user: {
-        password: "FunRun2026Staff",
+        password: "user12345",
         role: "staff"
     }
 };
@@ -765,5 +765,99 @@ function copyCode() {
   else { var ta = document.createElement('textarea'); ta.value = code; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); alert('Code copied to clipboard!'); }
 }
 </script><script>if (typeof applyRoleAccess === 'function') applyRoleAccess();</script>
+
+<script>
+function getProofUrl(reg) {
+  const possibleKeys = [
+    'Proof of Payment URL',
+    'Proof URL',
+    'Payment Proof URL',
+    'Proof of Payment',
+    'proofUrl',
+    'proofURL',
+    'proof',
+    'paymentProof',
+    'paymentProofUrl'
+  ];
+
+  let url = '';
+
+  for (const key of possibleKeys) {
+    if (reg && reg[key]) {
+      url = String(reg[key]).trim();
+      break;
+    }
+  }
+
+  if (!url) return '';
+
+  // If Google Drive file ID only was saved
+  if (/^[a-zA-Z0-9_-]{20,}$/.test(url) && !url.startsWith('http')) {
+    return 'https://drive.google.com/file/d/' + url + '/view?usp=sharing';
+  }
+
+  // If full Google Drive open URL was saved
+  const openMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (openMatch) {
+    return 'https://drive.google.com/file/d/' + openMatch[1] + '/view?usp=sharing';
+  }
+
+  // If direct Google Drive file URL was saved, normalize it
+  const fileMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (fileMatch) {
+    return 'https://drive.google.com/file/d/' + fileMatch[1] + '/view?usp=sharing';
+  }
+
+  // Only allow proper external or data URLs.
+  // This prevents GitHub Pages 404 from opening local/relative values.
+  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
+    return url;
+  }
+
+  return '';
+}
+
+function openProof(reg) {
+  const url = getProofUrl(reg);
+
+  if (!url) {
+    alert('No valid proof of payment link found for this registration. Please check the Google Sheet column "Proof of Payment URL".');
+    return;
+  }
+
+  window.open(url, '_blank', 'noopener,noreferrer');
+}
+</script>
+
+
+<script>
+function normalizeProofLinks() {
+  document.querySelectorAll('a.proof-link').forEach(function(a) {
+    const href = a.getAttribute('href') || '';
+    if (!href || href === '#' || (!href.startsWith('http') && !href.startsWith('data:'))) {
+      a.removeAttribute('href');
+      a.style.opacity = '.5';
+      a.title = 'Invalid proof link. Check Google Sheet column: Proof of Payment URL';
+      a.onclick = function(e) {
+        e.preventDefault();
+        alert('Invalid proof link. Please check the Google Sheet column "Proof of Payment URL".');
+      };
+      return;
+    }
+
+    const fixed = getProofUrl({'Proof of Payment URL': href});
+    if (fixed) {
+      a.setAttribute('href', fixed);
+      a.setAttribute('target', '_blank');
+      a.setAttribute('rel', 'noopener noreferrer');
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  setInterval(normalizeProofLinks, 1000);
+});
+</script>
+
 </body>
 </html>
