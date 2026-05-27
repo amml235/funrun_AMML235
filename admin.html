@@ -217,7 +217,7 @@ const USERS = {
     },
     user: {
         password: "FunRun2026Staff",
-        role: "jeromecariaga"
+        role: "staff"
     }
 };
 
@@ -260,7 +260,7 @@ if (localStorage.getItem(LOGIN_KEY) !== "true" || !localStorage.getItem(ROLE_KEY
 }
 
 function getCurrentRole() {
-    return localStorage.getItem(ROLE_KEY) || "user";
+    return localStorage.getItem(ROLE_KEY) || "staff";
 }
 
 function isAdminUser() {
