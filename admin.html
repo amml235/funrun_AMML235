@@ -210,36 +210,92 @@ pre {
 <body>
 
 <script>
-const ADMIN_PASSWORD = "FunRun2026Admin";
+const USERS = {
+    admin: {
+        password: "FunRun2026Admin",
+        role: "admin"
+    },
+    staff: {
+        password: "FunRun2026Staff",
+        role: "staff"
+    }
+};
+
 const LOGIN_KEY = "funrun2026_admin_logged_in";
+const ROLE_KEY = "funrun2026_admin_role";
+const USER_KEY = "funrun2026_admin_user";
 
-if (localStorage.getItem(LOGIN_KEY) !== "true") {
-    const entered = prompt("Enter Admin Password");
+function showAccessDenied(message) {
+    document.body.innerHTML = `
+        <div style="
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            height:100vh;
+            background:#071525;
+            color:white;
+            font-family:Arial;
+            flex-direction:column;
+            text-align:center;
+            padding:20px;
+        ">
+            <h1>Access Denied</h1>
+            <p>${message || "Invalid username or password."}</p>
+        </div>
+    `;
+    throw new Error("Unauthorized");
+}
 
-    if (entered === ADMIN_PASSWORD) {
+if (localStorage.getItem(LOGIN_KEY) !== "true" || !localStorage.getItem(ROLE_KEY)) {
+    const username = prompt("Enter Username: admin or staff");
+    const password = prompt("Enter Password:");
+
+    if (USERS[username] && USERS[username].password === password) {
         localStorage.setItem(LOGIN_KEY, "true");
+        localStorage.setItem(ROLE_KEY, USERS[username].role);
+        localStorage.setItem(USER_KEY, username);
     } else {
-        document.body.innerHTML = `
-            <div style="
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                height:100vh;
-                background:#071525;
-                color:white;
-                font-family:Arial;
-                flex-direction:column;
-            ">
-                <h1>Access Denied</h1>
-                <p>Invalid password.</p>
-            </div>
-        `;
-        throw new Error("Unauthorized");
+        showAccessDenied("Invalid username or password.");
     }
 }
 
+function getCurrentRole() {
+    return localStorage.getItem(ROLE_KEY) || "staff";
+}
+
+function isAdminUser() {
+    return getCurrentRole() === "admin";
+}
+
+function applyRoleAccess() {
+    const role = getCurrentRole();
+    const user = localStorage.getItem(USER_KEY) || role;
+
+    const setupNav = document.getElementById("nav-setup");
+    const setupTab = document.getElementById("tab-setup");
+
+    if (!isAdminUser()) {
+        if (setupNav) setupNav.style.display = "none";
+        if (setupTab) setupTab.style.display = "none";
+        if (typeof switchTab === "function") switchTab("reg");
+    }
+
+    const topActions = document.querySelector(".top-actions");
+    if (topActions && !document.getElementById("login-role-badge")) {
+        const badge = document.createElement("span");
+        badge.id = "login-role-badge";
+        badge.textContent = "Logged in: " + user + " (" + role + ")";
+        badge.style.cssText = "align-self:center;font-size:11px;color:rgba(255,255,255,.45);letter-spacing:1px;text-transform:uppercase;margin-right:6px;";
+        topActions.prepend(badge);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", applyRoleAccess);
+
 function adminLogout() {
     localStorage.removeItem(LOGIN_KEY);
+    localStorage.removeItem(ROLE_KEY);
+    localStorage.removeItem(USER_KEY);
     location.reload();
 }
 </script>
@@ -505,10 +561,25 @@ window.onload = function() {
 };
 
 function switchTab(name) {
+  if (name === 'setup' && typeof isAdminUser === 'function' && !isAdminUser()) {
+    alert('Setup Guide is only available for the main admin account.');
+    name = 'reg';
+  }
+
   document.getElementById('tab-reg').style.display = name === 'reg' ? '' : 'none';
-  document.getElementById('tab-setup').style.display = name === 'setup' ? '' : 'none';
+
+  var setupTab = document.getElementById('tab-setup');
+  var setupNav = document.getElementById('nav-setup');
+
+  if (setupTab) {
+    setupTab.style.display = name === 'setup' ? '' : 'none';
+  }
+
   document.getElementById('nav-reg').classList.toggle('active', name === 'reg');
-  document.getElementById('nav-setup').classList.toggle('active', name === 'setup');
+
+  if (setupNav) {
+    setupNav.classList.toggle('active', name === 'setup');
+  }
 }
 
 function saveUrl() {
@@ -693,5 +764,6 @@ function copyCode() {
   if (navigator.clipboard) navigator.clipboard.writeText(code).then(function() { alert('Code copied to clipboard!'); });
   else { var ta = document.createElement('textarea'); ta.value = code; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); alert('Code copied to clipboard!'); }
 }
-</script></body>
+</script><script>if (typeof applyRoleAccess === 'function') applyRoleAccess();</script>
+</body>
 </html>
