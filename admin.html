@@ -211,26 +211,36 @@ pre {
 
 <script>
 const ADMIN_PASSWORD = "FunRun2026Admin";
+const LOGIN_KEY = "funrun2026_admin_logged_in";
 
-const entered = prompt("Enter Admin Password");
+if (localStorage.getItem(LOGIN_KEY) !== "true") {
+    const entered = prompt("Enter Admin Password");
 
-if (entered !== ADMIN_PASSWORD) {
-    document.body.innerHTML = `
-        <div style="
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            height:100vh;
-            background:#071525;
-            color:white;
-            font-family:Arial;
-            flex-direction:column;
-        ">
-            <h1>Access Denied</h1>
-            <p>Invalid password.</p>
-        </div>
-    `;
-    throw new Error("Unauthorized");
+    if (entered === ADMIN_PASSWORD) {
+        localStorage.setItem(LOGIN_KEY, "true");
+    } else {
+        document.body.innerHTML = `
+            <div style="
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                height:100vh;
+                background:#071525;
+                color:white;
+                font-family:Arial;
+                flex-direction:column;
+            ">
+                <h1>Access Denied</h1>
+                <p>Invalid password.</p>
+            </div>
+        `;
+        throw new Error("Unauthorized");
+    }
+}
+
+function adminLogout() {
+    localStorage.removeItem(LOGIN_KEY);
+    location.reload();
 }
 </script>
 
@@ -276,6 +286,7 @@ if (entered !== ADMIN_PASSWORD) {
     <div class="top-bar">
       <h1>Registration <span>List</span></h1>
       <div class="top-actions">
+    <button class="btn-sm btn-muted" onclick="adminLogout()">Logout</button>
         <button class="btn-sm btn-gold" onclick="exportCSV()">⬇ Export CSV</button>
         <button class="btn-sm btn-muted" onclick="loadFromScript()">↻ Sync from Sheets</button>
       </div>
