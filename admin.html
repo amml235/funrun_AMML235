@@ -208,6 +208,32 @@ pre {
 </style>
 </head>
 <body>
+
+<script>
+const ADMIN_PASSWORD = "FunRun2026Admin";
+
+const entered = prompt("Enter Admin Password");
+
+if (entered !== ADMIN_PASSWORD) {
+    document.body.innerHTML = `
+        <div style="
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            height:100vh;
+            background:#071525;
+            color:white;
+            font-family:Arial;
+            flex-direction:column;
+        ">
+            <h1>Access Denied</h1>
+            <p>Invalid password.</p>
+        </div>
+    `;
+    throw new Error("Unauthorized");
+}
+</script>
+
 <div class="layout">
 
 <!-- SIDEBAR -->
