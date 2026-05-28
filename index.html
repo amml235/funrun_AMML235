@@ -578,47 +578,68 @@ footer { background:var(--dark); border-top:1px solid var(--border); padding:50p
 .runner-track {
   position: absolute;
   bottom: 18px; left: 0; right: 0;
-  height: 90px;
+  height: 130px;
   pointer-events: none;
   overflow: hidden;
   z-index: 1;
 }
 .runner {
   position: absolute; left: 0;
-  filter: drop-shadow(0 0 14px rgba(255,180,0,.55));
+  filter: drop-shadow(0 0 14px rgba(255,180,0,.35));
   will-change: transform;
   animation: run-across 14s linear infinite;
 }
-/* lead runner — biggest, brightest */
-.runner.r1 { bottom: 0;  color: rgba(255, 220, 80, .88); animation-duration: 14s; animation-delay: 0s; }
-.runner.r1 svg { width: 58px; height: 82px; }
+/* lead runner — biggest, brightest, team colors */
+.runner.r1 {
+  bottom: 0; animation-duration: 14s; animation-delay: 0s;
+  --shirt:#FFD86E; --shirt-dark:#C8972A; --shoe:#FF6B35;
+  --skin:#FFD9B0; --hair:#3A2A1A; --band:#E23B3B;
+  --leg:#F5C542; --arm:#FFCD58;
+}
+.runner.r1 svg { width: 70px; height: 88px; }
 
-/* second runner — slightly behind, a touch smaller */
-.runner.r2 { bottom: 6px; color: rgba(255, 200, 40, .72); animation-duration: 17s; animation-delay: -5s; }
-.runner.r2 svg { width: 50px; height: 70px; animation-duration: .30s; }
+/* second runner — slightly behind, blue shirt */
+.runner.r2 {
+  bottom: 6px; animation-duration: 17s; animation-delay: -5s;
+  --shirt:#7FC8E8; --shirt-dark:#3F7FA0; --shoe:#FF9F1C;
+  --skin:#E4B98F; --hair:#1B1410; --band:#FFFFFF;
+  --leg:#A8D8F0; --arm:#9CD0E8;
+}
+.runner.r2 svg { width: 58px; height: 73px; animation-duration: .30s; }
 .runner.r2 .frame-a, .runner.r2 .frame-b { animation-duration: .30s; }
 .runner.r2 .frame-b { animation-delay: .15s; }
 
-/* third runner — quicker stride, mid-pack */
-.runner.r3 { bottom: 2px; color: rgba(255, 230, 110, .82); animation-duration: 12s; animation-delay: -9s; }
-.runner.r3 svg { width: 54px; height: 76px; animation-duration: .24s; }
+/* third runner — quicker stride, teal/green */
+.runner.r3 {
+  bottom: 2px; animation-duration: 12s; animation-delay: -9s;
+  --shirt:#9BE38A; --shirt-dark:#3D8F32; --shoe:#E23B3B;
+  --skin:#F2D1A6; --hair:#2A1F18; --band:#FFD86E;
+  --leg:#BEEEB0; --arm:#B0E0A0;
+}
+.runner.r3 svg { width: 62px; height: 78px; animation-duration: .24s; }
 .runner.r3 .frame-a, .runner.r3 .frame-b { animation-duration: .24s; }
 .runner.r3 .frame-b { animation-delay: .12s; }
 
-/* back of the pack — smaller, fainter, slower */
-.runner.r4 { bottom: 10px; color: rgba(255, 200, 40, .55); animation-duration: 20s; animation-delay: -10s; }
-.runner.r4 svg { width: 44px; height: 62px; animation-duration: .34s; }
+/* back of the pack — smaller, fainter, purple-ish */
+.runner.r4 {
+  bottom: 10px; animation-duration: 20s; animation-delay: -10s;
+  --shirt:#D9A5E8; --shirt-dark:#6B3F8C; --shoe:#3D8F32;
+  --skin:#EFCBA5; --hair:#1A0E08; --band:#FFFFFF;
+  --leg:#E8C3F2; --arm:#DFB5E8;
+  opacity: .82;
+}
+.runner.r4 svg { width: 50px; height: 63px; animation-duration: .34s; }
 .runner.r4 .frame-a, .runner.r4 .frame-b { animation-duration: .34s; }
 .runner.r4 .frame-b { animation-delay: .17s; }
 
 @keyframes run-across {
-  from { transform: translateX(-120px); }
-  to   { transform: translateX(calc(100vw + 60px)); }
+  from { transform: translateX(-130px); }
+  to   { transform: translateX(calc(100vw + 70px)); }
 }
 .runner svg { display:block; animation: runner-bob .28s ease-in-out infinite alternate; }
 @keyframes runner-bob {
-  from { transform: translateY(0); }
-  to   { transform: translateY(-3px); }
+  from { transform: translateY(0) rotate(-1.5deg); }
+  to   { transform: translateY(-7px) rotate(1.5deg); }
 }
 .runner .frame-a, .runner .frame-b {
   animation: frame-toggle .28s steps(1) infinite;
@@ -630,10 +651,10 @@ footer { background:var(--dark); border-top:1px solid var(--border); padding:50p
 }
 @media (max-width: 600px) {
   .hero-seal-bg { width: 480px; height: 480px; right: -140px; opacity: .055; }
-  .runner.r1 svg { width: 44px; height: 64px; }
-  .runner.r2 svg { width: 38px; height: 56px; }
-  .runner.r3 svg { width: 40px; height: 58px; }
-  .runner.r4 svg { width: 34px; height: 50px; }
+  .runner.r1 svg { width: 52px; height: 65px; }
+  .runner.r2 svg { width: 44px; height: 55px; }
+  .runner.r3 svg { width: 46px; height: 58px; }
+  .runner.r4 svg { width: 38px; height: 48px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-seal-bg, .speed-lines, .runner, .runner svg,
@@ -723,68 +744,188 @@ footer { background:var(--dark); border-top:1px solid var(--border); padding:50p
     </div>
   </div>
   <div class="runner-track">
-    <div class="runner r1"><svg viewBox="0 0 60 80" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" aria-hidden="true">
-  <circle cx="30" cy="14" r="7" fill="currentColor" stroke="none"/>
-  <path d="M30 21 L29 47" stroke-width="3.2" stroke-linecap="round"/>
+    <div class="runner r1"><svg viewBox="0 0 80 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <ellipse class="r-shadow" cx="40" cy="94" rx="18" ry="3" fill="rgba(0,0,0,0.25)"/>
   <g class="frame frame-a">
-    <path d="M29 47 L19 70" stroke-width="3.2" stroke-linecap="round"/>
-    <path d="M29 47 L41 66" stroke-width="3.2" stroke-linecap="round"/>
-    <path d="M30 27 L19 38" stroke-width="2.8" stroke-linecap="round"/>
-    <path d="M30 27 L41 39" stroke-width="2.8" stroke-linecap="round"/>
+    <!-- back leg extended down-back -->
+    <path d="M 38,58 Q 30,72 22,78" stroke="var(--leg, #F5C542)" stroke-width="9" stroke-linecap="round" fill="none"/>
+    <ellipse cx="20" cy="80" rx="7" ry="4" fill="var(--shoe, #FF6B35)" transform="rotate(-15 20 80)"/>
+    <!-- body -->
+    <path d="M 36,32 Q 32,46 36,58 Q 46,60 48,46 Q 48,38 44,32 Z" fill="var(--shirt, #FFD86E)"/>
+    <path d="M 36,40 Q 42,42 47,40" stroke="var(--shirt-dark, #E0A91A)" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <!-- back arm bent up behind -->
+    <path d="M 40,36 Q 32,42 30,30" stroke="var(--arm, #FFCD58)" stroke-width="7" stroke-linecap="round" fill="none"/>
+    <!-- head -->
+    <circle cx="46" cy="22" r="11" fill="var(--skin, #FFD9B0)"/>
+    <path d="M 36,18 Q 46,9 56,18 L 56,21 Q 46,16 36,21 Z" fill="var(--hair, #3A2A1A)"/>
+    <rect x="36" y="18" width="20" height="2.5" fill="var(--band, #E23B3B)"/>
+    <circle cx="51" cy="23" r="1.3" fill="#222"/>
+    <path d="M 49,28 Q 52,29 54,28" stroke="#222" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <!-- front arm bent forward up -->
+    <path d="M 44,36 Q 56,38 54,24" stroke="var(--arm, #FFCD58)" stroke-width="7" stroke-linecap="round" fill="none"/>
+    <circle cx="54" cy="22" r="3.5" fill="var(--skin, #FFD9B0)"/>
+    <!-- front high-knee leg -->
+    <path d="M 42,58 Q 58,54 60,68" stroke="var(--leg, #F5C542)" stroke-width="9" stroke-linecap="round" fill="none"/>
+    <ellipse cx="62" cy="70" rx="7" ry="4" fill="var(--shoe, #FF6B35)" transform="rotate(15 62 70)"/>
   </g>
   <g class="frame frame-b" opacity="0">
-    <path d="M29 47 L41 70" stroke-width="3.2" stroke-linecap="round"/>
-    <path d="M29 47 L19 66" stroke-width="3.2" stroke-linecap="round"/>
-    <path d="M30 27 L41 38" stroke-width="2.8" stroke-linecap="round"/>
-    <path d="M30 27 L19 39" stroke-width="2.8" stroke-linecap="round"/>
+    <!-- back leg extended further back-down (leaping) -->
+    <path d="M 38,58 Q 26,64 16,68" stroke="var(--leg, #F5C542)" stroke-width="9" stroke-linecap="round" fill="none"/>
+    <ellipse cx="14" cy="69" rx="7" ry="4" fill="var(--shoe, #FF6B35)" transform="rotate(-20 14 69)"/>
+    <path d="M 36,32 Q 32,46 36,58 Q 46,60 48,46 Q 48,38 44,32 Z" fill="var(--shirt, #FFD86E)"/>
+    <path d="M 36,40 Q 42,42 47,40" stroke="var(--shirt-dark, #E0A91A)" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <!-- back arm swung back-down -->
+    <path d="M 40,36 Q 32,46 26,54" stroke="var(--arm, #FFCD58)" stroke-width="7" stroke-linecap="round" fill="none"/>
+    <circle cx="25" cy="55" r="3.5" fill="var(--skin, #FFD9B0)"/>
+    <circle cx="46" cy="22" r="11" fill="var(--skin, #FFD9B0)"/>
+    <path d="M 36,18 Q 46,9 56,18 L 56,21 Q 46,16 36,21 Z" fill="var(--hair, #3A2A1A)"/>
+    <rect x="36" y="18" width="20" height="2.5" fill="var(--band, #E23B3B)"/>
+    <circle cx="51" cy="23" r="1.3" fill="#222"/>
+    <path d="M 49,28 Q 52,29 54,28" stroke="#222" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <!-- front arm reaching forward up -->
+    <path d="M 44,36 Q 56,30 62,22" stroke="var(--arm, #FFCD58)" stroke-width="7" stroke-linecap="round" fill="none"/>
+    <circle cx="63" cy="21" r="3.5" fill="var(--skin, #FFD9B0)"/>
+    <!-- front leg extended forward -->
+    <path d="M 42,58 Q 54,68 64,72" stroke="var(--leg, #F5C542)" stroke-width="9" stroke-linecap="round" fill="none"/>
+    <ellipse cx="66" cy="73" rx="7" ry="4" fill="var(--shoe, #FF6B35)" transform="rotate(25 66 73)"/>
   </g>
 </svg></div>
-    <div class="runner r2"><svg viewBox="0 0 60 80" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" aria-hidden="true">
-  <circle cx="30" cy="14" r="7" fill="currentColor" stroke="none"/>
-  <path d="M30 21 L29 47" stroke-width="3.2" stroke-linecap="round"/>
+    <div class="runner r2"><svg viewBox="0 0 80 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <ellipse class="r-shadow" cx="40" cy="94" rx="18" ry="3" fill="rgba(0,0,0,0.25)"/>
   <g class="frame frame-a">
-    <path d="M29 47 L19 70" stroke-width="3.2" stroke-linecap="round"/>
-    <path d="M29 47 L41 66" stroke-width="3.2" stroke-linecap="round"/>
-    <path d="M30 27 L19 38" stroke-width="2.8" stroke-linecap="round"/>
-    <path d="M30 27 L41 39" stroke-width="2.8" stroke-linecap="round"/>
+    <!-- back leg extended down-back -->
+    <path d="M 38,58 Q 30,72 22,78" stroke="var(--leg, #F5C542)" stroke-width="9" stroke-linecap="round" fill="none"/>
+    <ellipse cx="20" cy="80" rx="7" ry="4" fill="var(--shoe, #FF6B35)" transform="rotate(-15 20 80)"/>
+    <!-- body -->
+    <path d="M 36,32 Q 32,46 36,58 Q 46,60 48,46 Q 48,38 44,32 Z" fill="var(--shirt, #FFD86E)"/>
+    <path d="M 36,40 Q 42,42 47,40" stroke="var(--shirt-dark, #E0A91A)" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <!-- back arm bent up behind -->
+    <path d="M 40,36 Q 32,42 30,30" stroke="var(--arm, #FFCD58)" stroke-width="7" stroke-linecap="round" fill="none"/>
+    <!-- head -->
+    <circle cx="46" cy="22" r="11" fill="var(--skin, #FFD9B0)"/>
+    <path d="M 36,18 Q 46,9 56,18 L 56,21 Q 46,16 36,21 Z" fill="var(--hair, #3A2A1A)"/>
+    <rect x="36" y="18" width="20" height="2.5" fill="var(--band, #E23B3B)"/>
+    <circle cx="51" cy="23" r="1.3" fill="#222"/>
+    <path d="M 49,28 Q 52,29 54,28" stroke="#222" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <!-- front arm bent forward up -->
+    <path d="M 44,36 Q 56,38 54,24" stroke="var(--arm, #FFCD58)" stroke-width="7" stroke-linecap="round" fill="none"/>
+    <circle cx="54" cy="22" r="3.5" fill="var(--skin, #FFD9B0)"/>
+    <!-- front high-knee leg -->
+    <path d="M 42,58 Q 58,54 60,68" stroke="var(--leg, #F5C542)" stroke-width="9" stroke-linecap="round" fill="none"/>
+    <ellipse cx="62" cy="70" rx="7" ry="4" fill="var(--shoe, #FF6B35)" transform="rotate(15 62 70)"/>
   </g>
   <g class="frame frame-b" opacity="0">
-    <path d="M29 47 L41 70" stroke-width="3.2" stroke-linecap="round"/>
-    <path d="M29 47 L19 66" stroke-width="3.2" stroke-linecap="round"/>
-    <path d="M30 27 L41 38" stroke-width="2.8" stroke-linecap="round"/>
-    <path d="M30 27 L19 39" stroke-width="2.8" stroke-linecap="round"/>
+    <!-- back leg extended further back-down (leaping) -->
+    <path d="M 38,58 Q 26,64 16,68" stroke="var(--leg, #F5C542)" stroke-width="9" stroke-linecap="round" fill="none"/>
+    <ellipse cx="14" cy="69" rx="7" ry="4" fill="var(--shoe, #FF6B35)" transform="rotate(-20 14 69)"/>
+    <path d="M 36,32 Q 32,46 36,58 Q 46,60 48,46 Q 48,38 44,32 Z" fill="var(--shirt, #FFD86E)"/>
+    <path d="M 36,40 Q 42,42 47,40" stroke="var(--shirt-dark, #E0A91A)" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <!-- back arm swung back-down -->
+    <path d="M 40,36 Q 32,46 26,54" stroke="var(--arm, #FFCD58)" stroke-width="7" stroke-linecap="round" fill="none"/>
+    <circle cx="25" cy="55" r="3.5" fill="var(--skin, #FFD9B0)"/>
+    <circle cx="46" cy="22" r="11" fill="var(--skin, #FFD9B0)"/>
+    <path d="M 36,18 Q 46,9 56,18 L 56,21 Q 46,16 36,21 Z" fill="var(--hair, #3A2A1A)"/>
+    <rect x="36" y="18" width="20" height="2.5" fill="var(--band, #E23B3B)"/>
+    <circle cx="51" cy="23" r="1.3" fill="#222"/>
+    <path d="M 49,28 Q 52,29 54,28" stroke="#222" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <!-- front arm reaching forward up -->
+    <path d="M 44,36 Q 56,30 62,22" stroke="var(--arm, #FFCD58)" stroke-width="7" stroke-linecap="round" fill="none"/>
+    <circle cx="63" cy="21" r="3.5" fill="var(--skin, #FFD9B0)"/>
+    <!-- front leg extended forward -->
+    <path d="M 42,58 Q 54,68 64,72" stroke="var(--leg, #F5C542)" stroke-width="9" stroke-linecap="round" fill="none"/>
+    <ellipse cx="66" cy="73" rx="7" ry="4" fill="var(--shoe, #FF6B35)" transform="rotate(25 66 73)"/>
   </g>
 </svg></div>
-    <div class="runner r3"><svg viewBox="0 0 60 80" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" aria-hidden="true">
-  <circle cx="30" cy="14" r="7" fill="currentColor" stroke="none"/>
-  <path d="M30 21 L29 47" stroke-width="3.2" stroke-linecap="round"/>
+    <div class="runner r3"><svg viewBox="0 0 80 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <ellipse class="r-shadow" cx="40" cy="94" rx="18" ry="3" fill="rgba(0,0,0,0.25)"/>
   <g class="frame frame-a">
-    <path d="M29 47 L19 70" stroke-width="3.2" stroke-linecap="round"/>
-    <path d="M29 47 L41 66" stroke-width="3.2" stroke-linecap="round"/>
-    <path d="M30 27 L19 38" stroke-width="2.8" stroke-linecap="round"/>
-    <path d="M30 27 L41 39" stroke-width="2.8" stroke-linecap="round"/>
+    <!-- back leg extended down-back -->
+    <path d="M 38,58 Q 30,72 22,78" stroke="var(--leg, #F5C542)" stroke-width="9" stroke-linecap="round" fill="none"/>
+    <ellipse cx="20" cy="80" rx="7" ry="4" fill="var(--shoe, #FF6B35)" transform="rotate(-15 20 80)"/>
+    <!-- body -->
+    <path d="M 36,32 Q 32,46 36,58 Q 46,60 48,46 Q 48,38 44,32 Z" fill="var(--shirt, #FFD86E)"/>
+    <path d="M 36,40 Q 42,42 47,40" stroke="var(--shirt-dark, #E0A91A)" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <!-- back arm bent up behind -->
+    <path d="M 40,36 Q 32,42 30,30" stroke="var(--arm, #FFCD58)" stroke-width="7" stroke-linecap="round" fill="none"/>
+    <!-- head -->
+    <circle cx="46" cy="22" r="11" fill="var(--skin, #FFD9B0)"/>
+    <path d="M 36,18 Q 46,9 56,18 L 56,21 Q 46,16 36,21 Z" fill="var(--hair, #3A2A1A)"/>
+    <rect x="36" y="18" width="20" height="2.5" fill="var(--band, #E23B3B)"/>
+    <circle cx="51" cy="23" r="1.3" fill="#222"/>
+    <path d="M 49,28 Q 52,29 54,28" stroke="#222" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <!-- front arm bent forward up -->
+    <path d="M 44,36 Q 56,38 54,24" stroke="var(--arm, #FFCD58)" stroke-width="7" stroke-linecap="round" fill="none"/>
+    <circle cx="54" cy="22" r="3.5" fill="var(--skin, #FFD9B0)"/>
+    <!-- front high-knee leg -->
+    <path d="M 42,58 Q 58,54 60,68" stroke="var(--leg, #F5C542)" stroke-width="9" stroke-linecap="round" fill="none"/>
+    <ellipse cx="62" cy="70" rx="7" ry="4" fill="var(--shoe, #FF6B35)" transform="rotate(15 62 70)"/>
   </g>
   <g class="frame frame-b" opacity="0">
-    <path d="M29 47 L41 70" stroke-width="3.2" stroke-linecap="round"/>
-    <path d="M29 47 L19 66" stroke-width="3.2" stroke-linecap="round"/>
-    <path d="M30 27 L41 38" stroke-width="2.8" stroke-linecap="round"/>
-    <path d="M30 27 L19 39" stroke-width="2.8" stroke-linecap="round"/>
+    <!-- back leg extended further back-down (leaping) -->
+    <path d="M 38,58 Q 26,64 16,68" stroke="var(--leg, #F5C542)" stroke-width="9" stroke-linecap="round" fill="none"/>
+    <ellipse cx="14" cy="69" rx="7" ry="4" fill="var(--shoe, #FF6B35)" transform="rotate(-20 14 69)"/>
+    <path d="M 36,32 Q 32,46 36,58 Q 46,60 48,46 Q 48,38 44,32 Z" fill="var(--shirt, #FFD86E)"/>
+    <path d="M 36,40 Q 42,42 47,40" stroke="var(--shirt-dark, #E0A91A)" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <!-- back arm swung back-down -->
+    <path d="M 40,36 Q 32,46 26,54" stroke="var(--arm, #FFCD58)" stroke-width="7" stroke-linecap="round" fill="none"/>
+    <circle cx="25" cy="55" r="3.5" fill="var(--skin, #FFD9B0)"/>
+    <circle cx="46" cy="22" r="11" fill="var(--skin, #FFD9B0)"/>
+    <path d="M 36,18 Q 46,9 56,18 L 56,21 Q 46,16 36,21 Z" fill="var(--hair, #3A2A1A)"/>
+    <rect x="36" y="18" width="20" height="2.5" fill="var(--band, #E23B3B)"/>
+    <circle cx="51" cy="23" r="1.3" fill="#222"/>
+    <path d="M 49,28 Q 52,29 54,28" stroke="#222" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <!-- front arm reaching forward up -->
+    <path d="M 44,36 Q 56,30 62,22" stroke="var(--arm, #FFCD58)" stroke-width="7" stroke-linecap="round" fill="none"/>
+    <circle cx="63" cy="21" r="3.5" fill="var(--skin, #FFD9B0)"/>
+    <!-- front leg extended forward -->
+    <path d="M 42,58 Q 54,68 64,72" stroke="var(--leg, #F5C542)" stroke-width="9" stroke-linecap="round" fill="none"/>
+    <ellipse cx="66" cy="73" rx="7" ry="4" fill="var(--shoe, #FF6B35)" transform="rotate(25 66 73)"/>
   </g>
 </svg></div>
-    <div class="runner r4"><svg viewBox="0 0 60 80" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" aria-hidden="true">
-  <circle cx="30" cy="14" r="7" fill="currentColor" stroke="none"/>
-  <path d="M30 21 L29 47" stroke-width="3.2" stroke-linecap="round"/>
+    <div class="runner r4"><svg viewBox="0 0 80 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <ellipse class="r-shadow" cx="40" cy="94" rx="18" ry="3" fill="rgba(0,0,0,0.25)"/>
   <g class="frame frame-a">
-    <path d="M29 47 L19 70" stroke-width="3.2" stroke-linecap="round"/>
-    <path d="M29 47 L41 66" stroke-width="3.2" stroke-linecap="round"/>
-    <path d="M30 27 L19 38" stroke-width="2.8" stroke-linecap="round"/>
-    <path d="M30 27 L41 39" stroke-width="2.8" stroke-linecap="round"/>
+    <!-- back leg extended down-back -->
+    <path d="M 38,58 Q 30,72 22,78" stroke="var(--leg, #F5C542)" stroke-width="9" stroke-linecap="round" fill="none"/>
+    <ellipse cx="20" cy="80" rx="7" ry="4" fill="var(--shoe, #FF6B35)" transform="rotate(-15 20 80)"/>
+    <!-- body -->
+    <path d="M 36,32 Q 32,46 36,58 Q 46,60 48,46 Q 48,38 44,32 Z" fill="var(--shirt, #FFD86E)"/>
+    <path d="M 36,40 Q 42,42 47,40" stroke="var(--shirt-dark, #E0A91A)" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <!-- back arm bent up behind -->
+    <path d="M 40,36 Q 32,42 30,30" stroke="var(--arm, #FFCD58)" stroke-width="7" stroke-linecap="round" fill="none"/>
+    <!-- head -->
+    <circle cx="46" cy="22" r="11" fill="var(--skin, #FFD9B0)"/>
+    <path d="M 36,18 Q 46,9 56,18 L 56,21 Q 46,16 36,21 Z" fill="var(--hair, #3A2A1A)"/>
+    <rect x="36" y="18" width="20" height="2.5" fill="var(--band, #E23B3B)"/>
+    <circle cx="51" cy="23" r="1.3" fill="#222"/>
+    <path d="M 49,28 Q 52,29 54,28" stroke="#222" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <!-- front arm bent forward up -->
+    <path d="M 44,36 Q 56,38 54,24" stroke="var(--arm, #FFCD58)" stroke-width="7" stroke-linecap="round" fill="none"/>
+    <circle cx="54" cy="22" r="3.5" fill="var(--skin, #FFD9B0)"/>
+    <!-- front high-knee leg -->
+    <path d="M 42,58 Q 58,54 60,68" stroke="var(--leg, #F5C542)" stroke-width="9" stroke-linecap="round" fill="none"/>
+    <ellipse cx="62" cy="70" rx="7" ry="4" fill="var(--shoe, #FF6B35)" transform="rotate(15 62 70)"/>
   </g>
   <g class="frame frame-b" opacity="0">
-    <path d="M29 47 L41 70" stroke-width="3.2" stroke-linecap="round"/>
-    <path d="M29 47 L19 66" stroke-width="3.2" stroke-linecap="round"/>
-    <path d="M30 27 L41 38" stroke-width="2.8" stroke-linecap="round"/>
-    <path d="M30 27 L19 39" stroke-width="2.8" stroke-linecap="round"/>
+    <!-- back leg extended further back-down (leaping) -->
+    <path d="M 38,58 Q 26,64 16,68" stroke="var(--leg, #F5C542)" stroke-width="9" stroke-linecap="round" fill="none"/>
+    <ellipse cx="14" cy="69" rx="7" ry="4" fill="var(--shoe, #FF6B35)" transform="rotate(-20 14 69)"/>
+    <path d="M 36,32 Q 32,46 36,58 Q 46,60 48,46 Q 48,38 44,32 Z" fill="var(--shirt, #FFD86E)"/>
+    <path d="M 36,40 Q 42,42 47,40" stroke="var(--shirt-dark, #E0A91A)" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <!-- back arm swung back-down -->
+    <path d="M 40,36 Q 32,46 26,54" stroke="var(--arm, #FFCD58)" stroke-width="7" stroke-linecap="round" fill="none"/>
+    <circle cx="25" cy="55" r="3.5" fill="var(--skin, #FFD9B0)"/>
+    <circle cx="46" cy="22" r="11" fill="var(--skin, #FFD9B0)"/>
+    <path d="M 36,18 Q 46,9 56,18 L 56,21 Q 46,16 36,21 Z" fill="var(--hair, #3A2A1A)"/>
+    <rect x="36" y="18" width="20" height="2.5" fill="var(--band, #E23B3B)"/>
+    <circle cx="51" cy="23" r="1.3" fill="#222"/>
+    <path d="M 49,28 Q 52,29 54,28" stroke="#222" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <!-- front arm reaching forward up -->
+    <path d="M 44,36 Q 56,30 62,22" stroke="var(--arm, #FFCD58)" stroke-width="7" stroke-linecap="round" fill="none"/>
+    <circle cx="63" cy="21" r="3.5" fill="var(--skin, #FFD9B0)"/>
+    <!-- front leg extended forward -->
+    <path d="M 42,58 Q 54,68 64,72" stroke="var(--leg, #F5C542)" stroke-width="9" stroke-linecap="round" fill="none"/>
+    <ellipse cx="66" cy="73" rx="7" ry="4" fill="var(--shoe, #FF6B35)" transform="rotate(25 66 73)"/>
   </g>
 </svg></div>
   </div>
