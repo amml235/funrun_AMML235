@@ -584,12 +584,33 @@ footer { background:var(--dark); border-top:1px solid var(--border); padding:50p
   z-index: 1;
 }
 .runner {
-  position: absolute; bottom: 0; left: 0;
-  color: rgba(255, 200, 40, .82);
-  animation: run-across 14s linear infinite;
+  position: absolute; left: 0;
   filter: drop-shadow(0 0 14px rgba(255,180,0,.55));
   will-change: transform;
+  animation: run-across 14s linear infinite;
 }
+/* lead runner — biggest, brightest */
+.runner.r1 { bottom: 0;  color: rgba(255, 220, 80, .88); animation-duration: 14s; animation-delay: 0s; }
+.runner.r1 svg { width: 58px; height: 82px; }
+
+/* second runner — slightly behind, a touch smaller */
+.runner.r2 { bottom: 6px; color: rgba(255, 200, 40, .72); animation-duration: 17s; animation-delay: -5s; }
+.runner.r2 svg { width: 50px; height: 70px; animation-duration: .30s; }
+.runner.r2 .frame-a, .runner.r2 .frame-b { animation-duration: .30s; }
+.runner.r2 .frame-b { animation-delay: .15s; }
+
+/* third runner — quicker stride, mid-pack */
+.runner.r3 { bottom: 2px; color: rgba(255, 230, 110, .82); animation-duration: 12s; animation-delay: -9s; }
+.runner.r3 svg { width: 54px; height: 76px; animation-duration: .24s; }
+.runner.r3 .frame-a, .runner.r3 .frame-b { animation-duration: .24s; }
+.runner.r3 .frame-b { animation-delay: .12s; }
+
+/* back of the pack — smaller, fainter, slower */
+.runner.r4 { bottom: 10px; color: rgba(255, 200, 40, .55); animation-duration: 20s; animation-delay: -10s; }
+.runner.r4 svg { width: 44px; height: 62px; animation-duration: .34s; }
+.runner.r4 .frame-a, .runner.r4 .frame-b { animation-duration: .34s; }
+.runner.r4 .frame-b { animation-delay: .17s; }
+
 @keyframes run-across {
   from { transform: translateX(-120px); }
   to   { transform: translateX(calc(100vw + 60px)); }
@@ -609,13 +630,40 @@ footer { background:var(--dark); border-top:1px solid var(--border); padding:50p
 }
 @media (max-width: 600px) {
   .hero-seal-bg { width: 480px; height: 480px; right: -140px; opacity: .055; }
-  .runner svg { width: 44px; height: 64px; }
+  .runner.r1 svg { width: 44px; height: 64px; }
+  .runner.r2 svg { width: 38px; height: 56px; }
+  .runner.r3 svg { width: 40px; height: 58px; }
+  .runner.r4 svg { width: 34px; height: 50px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-seal-bg, .speed-lines, .runner, .runner svg,
   .runner .frame-a, .runner .frame-b { animation: none !important; }
   .runner .frame-b { opacity: 0; }
 }
+
+/* ===== CASH PAYMENT CALLOUT ===== */
+.cash-callout {
+  background: linear-gradient(135deg, rgba(255,200,40,.12), rgba(255,140,0,.08));
+  border: 1.5px solid rgba(255,200,40,.5);
+  border-left: 4px solid #C8972A;
+  border-radius: 10px;
+  padding: 14px 18px;
+  color: #1a1a2e;
+}
+.cash-callout-title {
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #8a6300;
+  margin-bottom: 6px;
+}
+.cash-callout-body {
+  font-size: 14px;
+  line-height: 1.55;
+  color: #2a2a3e;
+}
+.cash-callout-body b { color: #1a1a2e; }
 
 </style>
 </head>
@@ -674,7 +722,8 @@ footer { background:var(--dark); border-top:1px solid var(--border); padding:50p
       <div class="hstat"><div class="hstat-num">2026</div><div class="hstat-lbl">Edition</div></div>
     </div>
   </div>
-  <div class="runner-track"><div class="runner"><svg viewBox="0 0 60 80" width="56" height="80" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" aria-hidden="true">
+  <div class="runner-track">
+    <div class="runner r1"><svg viewBox="0 0 60 80" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" aria-hidden="true">
   <circle cx="30" cy="14" r="7" fill="currentColor" stroke="none"/>
   <path d="M30 21 L29 47" stroke-width="3.2" stroke-linecap="round"/>
   <g class="frame frame-a">
@@ -689,7 +738,56 @@ footer { background:var(--dark); border-top:1px solid var(--border); padding:50p
     <path d="M30 27 L41 38" stroke-width="2.8" stroke-linecap="round"/>
     <path d="M30 27 L19 39" stroke-width="2.8" stroke-linecap="round"/>
   </g>
-</svg></div></div>
+</svg></div>
+    <div class="runner r2"><svg viewBox="0 0 60 80" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" aria-hidden="true">
+  <circle cx="30" cy="14" r="7" fill="currentColor" stroke="none"/>
+  <path d="M30 21 L29 47" stroke-width="3.2" stroke-linecap="round"/>
+  <g class="frame frame-a">
+    <path d="M29 47 L19 70" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M29 47 L41 66" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M30 27 L19 38" stroke-width="2.8" stroke-linecap="round"/>
+    <path d="M30 27 L41 39" stroke-width="2.8" stroke-linecap="round"/>
+  </g>
+  <g class="frame frame-b" opacity="0">
+    <path d="M29 47 L41 70" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M29 47 L19 66" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M30 27 L41 38" stroke-width="2.8" stroke-linecap="round"/>
+    <path d="M30 27 L19 39" stroke-width="2.8" stroke-linecap="round"/>
+  </g>
+</svg></div>
+    <div class="runner r3"><svg viewBox="0 0 60 80" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" aria-hidden="true">
+  <circle cx="30" cy="14" r="7" fill="currentColor" stroke="none"/>
+  <path d="M30 21 L29 47" stroke-width="3.2" stroke-linecap="round"/>
+  <g class="frame frame-a">
+    <path d="M29 47 L19 70" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M29 47 L41 66" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M30 27 L19 38" stroke-width="2.8" stroke-linecap="round"/>
+    <path d="M30 27 L41 39" stroke-width="2.8" stroke-linecap="round"/>
+  </g>
+  <g class="frame frame-b" opacity="0">
+    <path d="M29 47 L41 70" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M29 47 L19 66" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M30 27 L41 38" stroke-width="2.8" stroke-linecap="round"/>
+    <path d="M30 27 L19 39" stroke-width="2.8" stroke-linecap="round"/>
+  </g>
+</svg></div>
+    <div class="runner r4"><svg viewBox="0 0 60 80" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" aria-hidden="true">
+  <circle cx="30" cy="14" r="7" fill="currentColor" stroke="none"/>
+  <path d="M30 21 L29 47" stroke-width="3.2" stroke-linecap="round"/>
+  <g class="frame frame-a">
+    <path d="M29 47 L19 70" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M29 47 L41 66" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M30 27 L19 38" stroke-width="2.8" stroke-linecap="round"/>
+    <path d="M30 27 L41 39" stroke-width="2.8" stroke-linecap="round"/>
+  </g>
+  <g class="frame frame-b" opacity="0">
+    <path d="M29 47 L41 70" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M29 47 L19 66" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M30 27 L41 38" stroke-width="2.8" stroke-linecap="round"/>
+    <path d="M30 27 L19 39" stroke-width="2.8" stroke-linecap="round"/>
+  </g>
+</svg></div>
+  </div>
 </section>
 
 <div class="divider"></div>
@@ -951,16 +1049,30 @@ footer { background:var(--dark); border-top:1px solid var(--border); padding:50p
           </div>
           <div class="fg">
             <label>Payment Method<span class="req">*</span></label>
-            <select id="r-payment">
+            <select id="r-payment" onchange="updatePaymentUI()">
               <option value="">Select payment method</option>
+              <option value="Cash">Cash</option>
+              <option value="Online Payment">Online Payment</option>
+            </select>
+          </div>
+          <div class="fg" id="payment-cash-note" style="display:none">
+            <div class="cash-callout">
+              <div class="cash-callout-title">Cash Payment Instructions</div>
+              <div class="cash-callout-body">Please pay your registration fee <b>on the day of the fun run</b> at the registration booth before the event starts. Bring exact change if possible.</div>
+            </div>
+          </div>
+          <div class="fg" id="payment-online-fg" style="display:none">
+            <label>Online Payment Type<span class="req">*</span></label>
+            <select id="r-payment-online">
+              <option value="">Select online payment type</option>
               <option>GCash</option>
               <option>Maya</option>
               <option>Bank Transfer (BPI)</option>
               <option>Bank Transfer (BDO)</option>
-              <option>Cash on Registration Day</option>
+              <option>Other</option>
             </select>
           </div>
-          <div class="fg">
+          <div class="fg" id="proof-fg">
             <label>Upload Proof of Payment<span class="req">*</span></label>
             <label class="file-wrap">
               <span class="file-btn">Choose File</span>
@@ -1097,7 +1209,40 @@ function getVal(id) {
   return el ? el.value.trim() : '';
 }
 
+function updatePaymentUI() {
+  var method = document.getElementById('r-payment').value;
+  var cashNote   = document.getElementById('payment-cash-note');
+  var onlineFg   = document.getElementById('payment-online-fg');
+  var proofFg    = document.getElementById('proof-fg');
+  if (method === 'Cash') {
+    cashNote.style.display = '';
+    onlineFg.style.display = 'none';
+    proofFg.style.display  = 'none';
+    // clear any previously uploaded proof since cash doesn't need one
+    var proofInput = document.getElementById('r-proof');
+    if (proofInput) proofInput.value = '';
+    var disp = document.getElementById('file-display');
+    if (disp) disp.textContent = 'No file chosen';
+  } else if (method === 'Online Payment') {
+    cashNote.style.display = 'none';
+    onlineFg.style.display = '';
+    proofFg.style.display  = '';
+  } else {
+    cashNote.style.display = 'none';
+    onlineFg.style.display = 'none';
+    proofFg.style.display  = '';
+  }
+}
+
 function submitForm() {
+  var paymentMethod = getVal('r-payment');
+  var onlineType    = getVal('r-payment-online');
+  // Build a single human-readable payment field, e.g. "Online Payment - GCash" or "Cash"
+  var paymentDisplay = paymentMethod;
+  if (paymentMethod === 'Online Payment' && onlineType) {
+    paymentDisplay = 'Online Payment - ' + onlineType;
+  }
+
   var fields = {
     fullName:         getVal('r-fullname'),
     phone:            getVal('r-phone'),
@@ -1110,7 +1255,7 @@ function submitForm() {
     gender:           (document.querySelector('input[name="gender"]:checked') || {}).value || '',
     category:         getVal('r-category'),
     shirtSize:        getVal('r-shirt'),
-    paymentMethod:    getVal('r-payment'),
+    paymentMethod:    paymentDisplay,
     status:           'Pending',
     timestamp:        new Date().toLocaleString()
   };
@@ -1127,7 +1272,8 @@ function submitForm() {
   if (!fields.age)              missing.push('Age');
   if (!fields.gender)           missing.push('Gender');
   if (!fields.shirtSize)        missing.push('Shirt Size');
-  if (!fields.paymentMethod)    missing.push('Payment Method');
+  if (!paymentMethod)           missing.push('Payment Method');
+  if (paymentMethod === 'Online Payment' && !onlineType) missing.push('Online Payment Type');
 
   if (missing.length) {
     alert('Please fill in the following required fields:\n\n' + missing.join('\n'));
