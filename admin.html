@@ -527,21 +527,39 @@ function adminLogout() {
 var regs = [];
 var scriptUrl = localStorage.getItem('fr26_script_url') || '';
 var APPS_SCRIPT_CODE = `// ============================================================
-//  Fun Run 2026 Google Apps Script Backend
-//  1) Paste this into script.google.com
-//  2) Deploy > New deployment > Web app
-//  3) Execute as: Me
-//  4) Who has access: Anyone
-//  5) Copy the Web App URL into the website and admin dashboard
+//  Fun Run 2026 Google Apps Script Backend - UPDATED VERSION
+//  + Auto-email to registrant on Payment Confirmed
 // ============================================================
+
+const SPREADSHEET_ID = "1gDesGQIAY2V8_CcObsauZ-WQOQzF1d7Qs3HVxNycCY0";
 
 const SHEET_NAME = "Registrations";
 const FOLDER_NAME = "FunRun2026_Payments";
+
 const HEADERS = [
-  "Timestamp", "Full Name", "Phone", "Emergency Contact", "Emergency Phone",
-  "Address", "Email", "Date of Birth", "Age", "Gender", "Category", "Shirt Size",
-  "Payment Method", "Proof of Payment URL", "Status"
+  "No.",
+  "Timestamp",
+  "Full Name",
+  "Phone",
+  "Emergency Contact",
+  "Emergency Phone",
+  "Address",
+  "Email",
+  "Date of Birth",
+  "Age",
+  "Gender",
+  "Category",
+  "Shirt Size",
+  "Payment Method",
+  "Proof of Payment URL",
+  "Status"
 ];
+
+// ─── Branding for the confirmation email ─────────────────────
+const EVENT_NAME  = "Fun Run 2026";
+const SENDER_NAME = "Fun Run 2026";
+const ORG_FOOTER  = "Apolinario Mabini Masonic Lodge No. 235 — RIII Nueva Ecija West";
+
 
 function doPost(e) {
   try {
@@ -549,102 +567,309 @@ function doPost(e) {
     const sheet = getSheet_();
 
     let fileUrl = "";
+
     if (data.proofBase64) {
       const folder = getOrCreateFolder_(FOLDER_NAME);
+
       const mimeType = data.proofMimeType || "image/jpeg";
       const ext = (mimeType.split("/")[1] || "jpg").replace("jpeg", "jpg");
+
       const base64 = String(data.proofBase64).split(",").pop();
-      const safeName = String(data.fullName || "proof").replace(/[^a-z0-9-_ ]/gi, "").trim() || "proof";
+
+      const safeName = String(data.fullName || "proof")
+        .replace(/[^a-z0-9-_ ]/gi, "")
+        .trim() || "proof";
+
       const blob = Utilities.newBlob(
         Utilities.base64Decode(base64),
         mimeType,
         safeName + "_" + Date.now() + "." + ext
       );
+
       const file = folder.createFile(blob);
-      file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+
+      file.setSharing(
+        DriveApp.Access.ANYONE_WITH_LINK,
+        DriveApp.Permission.VIEW
+      );
+
       fileUrl = file.getUrl();
     }
 
+    // AUTO NUMBERING
+    const nextNo = sheet.getLastRow();
+
     sheet.appendRow([
-      new Date(), data.fullName || "", data.phone || "", data.emergencyContact || "",
-      data.emergencyPhone || "", data.address || "", data.email || "", data.dob || "",
-      data.age || "", data.gender || "", data.category || "5K Run", data.shirtSize || "",
-      data.paymentMethod || "", fileUrl, "Pending"
+      nextNo,
+      new Date(),
+      data.fullName || "",
+      data.phone || "",
+      data.emergencyContact || "",
+      data.emergencyPhone || "",
+      data.address || "",
+      data.email || "",
+      data.dob || "",
+      data.age || "",
+      data.gender || "",
+      data.category || "5K Run",
+      data.shirtSize || "",
+      data.paymentMethod || "",
+      fileUrl,
+      "Pending"
     ]);
 
-    return output_({ success: true, message: "Registration saved." }, e);
+    return output_({
+      success: true,
+      message: "Registration saved."
+    }, e);
+
   } catch (err) {
-    return output_({ success: false, error: String(err) }, e);
+    return output_({
+      success: false,
+      error: String(err)
+    }, e);
   }
 }
+
 
 function doGet(e) {
   try {
     const action = (e && e.parameter && e.parameter.action) || "list";
+
     const sheet = getSheet_();
 
     if (action === "update") {
+
       const row = Number(e.parameter.row);
       const status = String(e.parameter.status || "Pending");
-      if (!row || row < 2) throw new Error("Invalid row number.");
-      if (["Pending", "Confirmed", "Rejected"].indexOf(status) === -1) throw new Error("Invalid status.");
 
-      const statusCol = HEADERS.indexOf("Status") + 1;
+      if (!row || row < 2) {
+        throw new Error("Invalid row number.");
+      }
+
+      if (["Pending", "Confirmed", "Rejected"].indexOf(status) === -1) {
+        throw new Error("Invalid status.");
+      }
+
+      const statusCol   = HEADERS.indexOf("Status") + 1;
+      const emailCol    = HEADERS.indexOf("Email") + 1;
+      const nameCol     = HEADERS.indexOf("Full Name") + 1;
+      const categoryCol = HEADERS.indexOf("Category") + 1;
+      const shirtCol    = HEADERS.indexOf("Shirt Size") + 1;
+
+      // Read the current status BEFORE we overwrite it, so we know
+      // whether this is a real transition INTO "Confirmed".
+      const oldStatus = String(
+        sheet.getRange(row, statusCol).getValue() || ""
+      );
+
       sheet.getRange(row, statusCol).setValue(status);
-      return output_({ success: true, row: row, status: status }, e);
+
+      let emailSent = false;
+
+      if (status === "Confirmed" && oldStatus !== "Confirmed") {
+
+        const email    = String(sheet.getRange(row, emailCol).getValue() || "").trim();
+        const name     = String(sheet.getRange(row, nameCol).getValue() || "").trim();
+        const category = String(sheet.getRange(row, categoryCol).getValue() || "5K Run");
+        const shirt    = String(sheet.getRange(row, shirtCol).getValue() || "—");
+
+        if (email && /^\S+@\S+\.\S+$/.test(email)) {
+          try {
+            sendConfirmationEmail_(email, name, category, shirt);
+            emailSent = true;
+          } catch (mailErr) {
+            // Don't fail the whole request if email fails —
+            // status update still succeeded.
+            console.error("Email send failed: " + mailErr);
+          }
+        }
+      }
+
+      return output_({
+        success: true,
+        row: row,
+        status: status,
+        emailSent: emailSent
+      }, e);
     }
 
     const values = sheet.getDataRange().getValues();
-    if (values.length <= 1) return output_({ success: true, rows: [] }, e);
+
+    if (values.length <= 1) {
+      return output_({
+        success: true,
+        rows: []
+      }, e);
+    }
 
     const headers = values[0];
+
     const rows = values.slice(1).map(function(row, i) {
-      const obj = { _rowNumber: i + 2 };
+
+      const obj = {
+        _rowNumber: i + 2
+      };
+
       headers.forEach(function(h, col) {
+
         obj[h] = row[col] instanceof Date
-          ? Utilities.formatDate(row[col], Session.getScriptTimeZone(), "yyyy-MM-dd HH:mm:ss")
+          ? Utilities.formatDate(
+              row[col],
+              Session.getScriptTimeZone(),
+              "yyyy-MM-dd HH:mm:ss"
+            )
           : row[col];
+
       });
+
       return obj;
     });
 
-    return output_({ success: true, rows: rows }, e);
+    return output_({
+      success: true,
+      rows: rows
+    }, e);
+
   } catch (err) {
-    return output_({ success: false, error: String(err), rows: [] }, e);
+
+    return output_({
+      success: false,
+      error: String(err),
+      rows: []
+    }, e);
   }
 }
 
+
+// ─── Confirmation email sender ───────────────────────────────
+function sendConfirmationEmail_(email, name, category, shirt) {
+
+  const safeName = name || "Runner";
+  const subject  = "✅ " + EVENT_NAME + " — Payment Confirmed";
+
+  const htmlBody =
+    '<div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;margin:0 auto;color:#1e293b;">' +
+      '<div style="background:linear-gradient(135deg,#FF5500,#FFC820);padding:26px;text-align:center;border-radius:10px 10px 0 0;">' +
+        '<h1 style="color:#fff;margin:0;font-size:26px;letter-spacing:3px;">' + EVENT_NAME.toUpperCase() + '</h1>' +
+        '<p style="color:#fff;margin:6px 0 0;font-size:13px;opacity:.92;letter-spacing:1px;">PAYMENT CONFIRMED</p>' +
+      '</div>' +
+      '<div style="background:#fff;border:1px solid #e6e9ef;border-top:none;padding:28px;border-radius:0 0 10px 10px;">' +
+        '<p style="font-size:16px;margin:0 0 14px;">Hi <strong>' + safeName + '</strong>,</p>' +
+        '<p style="font-size:14px;line-height:1.6;color:#475569;">Great news — we\'ve received and verified your payment. ' +
+          'You are officially registered for <strong>' + EVENT_NAME + '</strong>! 🎉</p>' +
+        '<div style="background:#f4f6f9;border-radius:8px;padding:16px 18px;margin:20px 0;">' +
+          '<p style="margin:0 0 8px;font-size:11px;color:#94a3b8;letter-spacing:2px;text-transform:uppercase;">Your Registration</p>' +
+          '<p style="margin:4px 0;font-size:14px;"><strong>Category:</strong> ' + category + '</p>' +
+          '<p style="margin:4px 0;font-size:14px;"><strong>Shirt Size:</strong> ' + shirt + '</p>' +
+        '</div>' +
+        '<p style="font-size:14px;line-height:1.6;color:#475569;">Please keep this email for your records. ' +
+          'We\'ll send another update with race-day details, bib pickup info, and the route map closer to the event.</p>' +
+        '<p style="font-size:14px;color:#475569;margin-top:22px;">See you at the starting line!<br>' +
+          '<strong>— The ' + EVENT_NAME + ' Team</strong></p>' +
+        '<hr style="border:none;border-top:1px solid #eef1f5;margin:24px 0 14px;">' +
+        '<p style="font-size:11px;color:#94a3b8;margin:0;">' + ORG_FOOTER + '</p>' +
+      '</div>' +
+    '</div>';
+
+  const plainBody =
+    "Hi " + safeName + ",\n\n" +
+    "Great news — we've received and verified your payment. " +
+    "You are officially registered for " + EVENT_NAME + "!\n\n" +
+    "Your Registration\n" +
+    "  Category:   " + category + "\n" +
+    "  Shirt Size: " + shirt + "\n\n" +
+    "Please keep this email for your records. We'll send another update " +
+    "with race-day details, bib pickup info, and the route map closer to the event.\n\n" +
+    "See you at the starting line!\n— The " + EVENT_NAME + " Team\n\n" +
+    ORG_FOOTER;
+
+  MailApp.sendEmail({
+    to: email,
+    subject: subject,
+    htmlBody: htmlBody,
+    body: plainBody,
+    name: SENDER_NAME
+  });
+}
+
+
 function getSheet_() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  if (
+    !SPREADSHEET_ID ||
+    SPREADSHEET_ID === "PASTE_YOUR_GOOGLE_SHEET_ID_HERE"
+  ) {
+    throw new Error(
+      "Please paste your Google Sheet ID in SPREADSHEET_ID."
+    );
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
   let sheet = ss.getSheetByName(SHEET_NAME);
-  if (!sheet) sheet = ss.insertSheet(SHEET_NAME);
+
+  if (!sheet) {
+    sheet = ss.insertSheet(SHEET_NAME);
+  }
 
   if (sheet.getLastRow() === 0) {
+
     sheet.appendRow(HEADERS);
+
     sheet.setFrozenRows(1);
+
   } else {
-    const current = sheet.getRange(1, 1, 1, Math.max(sheet.getLastColumn(), HEADERS.length)).getValues()[0];
-    if (current[0] !== "Timestamp") {
+
+    const current = sheet.getRange(
+      1,
+      1,
+      1,
+      Math.max(sheet.getLastColumn(), HEADERS.length)
+    ).getValues()[0];
+
+    if (current[0] !== "No.") {
+
       sheet.insertRowBefore(1);
-      sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
+
+      sheet.getRange(
+        1,
+        1,
+        1,
+        HEADERS.length
+      ).setValues([HEADERS]);
+
       sheet.setFrozenRows(1);
     }
   }
+
   return sheet;
 }
 
+
 function getOrCreateFolder_(name) {
+
   const folders = DriveApp.getFoldersByName(name);
-  return folders.hasNext() ? folders.next() : DriveApp.createFolder(name);
+
+  return folders.hasNext()
+    ? folders.next()
+    : DriveApp.createFolder(name);
 }
 
+
 function output_(obj, e) {
+
   const callback = e && e.parameter && e.parameter.callback;
+
   if (callback) {
+
     return ContentService
-      .createTextOutput(callback + "(" + JSON.stringify(obj) + ");")
+      .createTextOutput(
+        callback + "(" + JSON.stringify(obj) + ");"
+      )
       .setMimeType(ContentService.MimeType.JAVASCRIPT);
   }
+
   return ContentService
     .createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
