@@ -1042,18 +1042,29 @@ function setStatus(idx, status) {
         if (!data || data.success === false) throw new Error((data && data.error) || 'Update failed.');
         // Surface email feedback when confirming a payment
         if (status === 'Confirmed') {
-          var recipient = regs[idx].email || 'registrant';
+          var recipient = regs[idx].email || '(empty)';
           if (data.emailSent === true) {
             alert('✅ Confirmed.\nConfirmation email sent to ' + recipient + '.');
+          } else if (data.emailSent === false) {
+            // NEW code IS deployed, but email did not send for this row
+            alert('⚠️ Your Apps Script IS up to date, but the email did not send for this registrant.\n\n' +
+                  'Likely reasons:\n' +
+                  '• This row was already "Confirmed" before — email only sends on the FIRST transition into Confirmed. Test with a Pending row, or switch to Pending then back to Confirmed.\n' +
+                  '• The Email cell is blank or malformed (current value: "' + recipient + '").\n' +
+                  '• The script has not been re-authorized for the "Send email" permission. Open the script editor → run any function once → accept the prompt.\n' +
+                  '• MailApp daily quota exceeded (100/day on free Gmail).\n\n' +
+                  'For the exact reason, open script.google.com → Executions tab → click the latest doGet entry.');
           } else {
-            alert('⚠️ Status updated to Confirmed, but the confirmation email did NOT send.\n\n' +
-                  'Most likely causes:\n' +
-                  '1. The Apps Script was not redeployed as a NEW VERSION after adding the email code.\n' +
-                  '   Fix: script.google.com → Deploy → Manage deployments → pencil icon → Version: "New version" → Deploy.\n' +
-                  '2. The script has not been re-authorized for the MailApp permission.\n' +
-                  '   Fix: Run any function once from the editor and accept the new prompt.\n' +
-                  '3. The Email cell for this registrant is empty or invalid (current value: "' + recipient + '").\n\n' +
-                  'For details, open script.google.com → Executions tab and check the latest run.');
+            // emailSent is undefined → OLD code still deployed
+            alert('⚠️ Your live deployment is still the OLD Apps Script (no email logic).\n\n' +
+                  'Pasting the new code in the editor is not enough — you must publish a NEW VERSION:\n\n' +
+                  '1. script.google.com → your project\n' +
+                  '2. Deploy → Manage deployments\n' +
+                  '3. Click the ✏️ pencil on your active deployment\n' +
+                  '4. Version dropdown → choose "New version"\n' +
+                  '5. Click Deploy\n' +
+                  '6. Approve the new "Send email as you" permission when prompted\n\n' +
+                  'Then reload this page and try Confirm again.');
           }
         }
       })
