@@ -1038,7 +1038,25 @@ function setStatus(idx, status) {
   render();
   if (scriptUrl && regs[idx]._rowNumber) {
     jsonp(scriptUrl, { action: 'update', row: regs[idx]._rowNumber, status: status })
-      .then(function(data) { if (!data || data.success === false) throw new Error((data && data.error) || 'Update failed.'); })
+      .then(function(data) {
+        if (!data || data.success === false) throw new Error((data && data.error) || 'Update failed.');
+        // Surface email feedback when confirming a payment
+        if (status === 'Confirmed') {
+          var recipient = regs[idx].email || 'registrant';
+          if (data.emailSent === true) {
+            alert('✅ Confirmed.\nConfirmation email sent to ' + recipient + '.');
+          } else {
+            alert('⚠️ Status updated to Confirmed, but the confirmation email did NOT send.\n\n' +
+                  'Most likely causes:\n' +
+                  '1. The Apps Script was not redeployed as a NEW VERSION after adding the email code.\n' +
+                  '   Fix: script.google.com → Deploy → Manage deployments → pencil icon → Version: "New version" → Deploy.\n' +
+                  '2. The script has not been re-authorized for the MailApp permission.\n' +
+                  '   Fix: Run any function once from the editor and accept the new prompt.\n' +
+                  '3. The Email cell for this registrant is empty or invalid (current value: "' + recipient + '").\n\n' +
+                  'For details, open script.google.com → Executions tab and check the latest run.');
+          }
+        }
+      })
       .catch(function(e) { alert('Status changed locally, but Google Sheets was not updated.\n\nError: ' + e.message); });
   }
 }
