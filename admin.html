@@ -525,7 +525,9 @@ function adminLogout() {
 <script>
 // ── STATE ──
 var regs = [];
-var scriptUrl = localStorage.getItem('fr26_script_url') || '';
+// ── Baked-in Google Apps Script Web App URL (static — always used) ──
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwDWh2j7f0JvMFQ8vXHvUjBngJajz_p4pTlsCDmpdCCvAdV9Ue1VEPi3wP_LuLib67L/exec';
+var scriptUrl = SCRIPT_URL;
 var APPS_SCRIPT_CODE = `// ============================================================
 //  Fun Run 2026 Google Apps Script Backend - UPDATED VERSION
 //  + Auto-email to registrant on Payment Confirmed
@@ -938,7 +940,7 @@ function jsonp(url, params) {
 }
 
 function loadFromScript(showAlert) {
-  scriptUrl = localStorage.getItem('fr26_script_url') || scriptUrl;
+  scriptUrl = SCRIPT_URL;
   if (!scriptUrl) {
     if (showAlert !== false) alert('Please add your Google Apps Script URL in the Setup Guide tab first.');
     switchTab('setup');
