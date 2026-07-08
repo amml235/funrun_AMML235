@@ -2111,7 +2111,7 @@ nav{
 <div class="fg-row">
 <div class="fg">
 <label>Date of Birth<span class="req">*</span></label>
-<input id="r-dob" type="date"/>
+<input id="r-dob" type="date" min="1936-08-01" max="2022-08-01"/>
 </div>
 <div class="fg">
 <label>Age<span class="req">*</span></label>
@@ -2404,6 +2404,27 @@ function agreeWaiverNotice() {
   if (cb) { cb.checked = true; cb.dispatchEvent(new Event('change')); }
   closeWaiverNotice();
 }
+function ageOnRaceDay(dobStr) {
+  var d = new Date(dobStr + 'T00:00:00');
+  if (isNaN(d.getTime())) return null;
+  var race = new Date('2026-08-01T00:00:00');
+  var age = race.getFullYear() - d.getFullYear();
+  var m = race.getMonth() - d.getMonth();
+  if (m < 0 || (m === 0 && race.getDate() < d.getDate())) age--;
+  return age;
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  var dobEl = document.getElementById('r-dob');
+  var ageEl = document.getElementById('r-age');
+  if (dobEl && ageEl) {
+    dobEl.addEventListener('change', function () {
+      var a = ageOnRaceDay(dobEl.value);
+      if (a !== null && a >= 0 && a <= 120) ageEl.value = a;
+    });
+  }
+});
+
 document.addEventListener('DOMContentLoaded', function () {
   var cb = document.getElementById('r-consent');
   var wv = document.getElementById('r-waiver');
@@ -2519,6 +2540,16 @@ function submitForm() {
     var el5 = document.getElementById('r-ec-phone'); if (el5) el5.focus();
     return;
   }
+
+  // Date of Birth sanity check (age as of race day, Aug 1 2026)
+  var raceAge = ageOnRaceDay(fields.dob);
+  if (raceAge === null || raceAge < 4 || raceAge > 90) {
+    alert('Please enter a valid Date of Birth. Participants must be at least 4 years old on race day (August 1, 2026).');
+    var el6 = document.getElementById('r-dob'); if (el6) el6.focus();
+    return;
+  }
+  // Keep the Age column consistent with the DOB
+  fields.age = String(raceAge);
 
   var btn1 = document.getElementById('submit-btn');
   var btn2 = document.querySelector('.sum-submit');
