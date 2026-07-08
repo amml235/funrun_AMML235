@@ -2488,6 +2488,38 @@ function submitForm() {
     return;
   }
 
+  // ---- Input quality checks ----
+  var hasDigit = /[0-9]/;
+  if (hasDigit.test(fields.fullName)) {
+    alert('Full Name should not contain numbers. Please enter your name only.');
+    var el = document.getElementById('r-fullname'); if (el) el.focus();
+    return;
+  }
+  if (hasDigit.test(fields.emergencyContact)) {
+    alert('Emergency Contact Person should be a NAME (e.g. a parent, spouse, or friend), not a phone number.\n\nPlease put the phone number in the Emergency Contact Number field.');
+    var el2 = document.getElementById('r-ec-name'); if (el2) el2.focus();
+    return;
+  }
+
+  // Normalize phone numbers to digits only (prevents +63 formula errors in the sheet)
+  fields.phone          = String(fields.phone).replace(/[^0-9]/g, '');
+  fields.emergencyPhone = String(fields.emergencyPhone).replace(/[^0-9]/g, '');
+  if (fields.phone.length < 10 || fields.phone.length > 13) {
+    alert('Please enter a valid mobile number (e.g. 09171234567).');
+    var el3 = document.getElementById('r-phone'); if (el3) el3.focus();
+    return;
+  }
+  if (fields.emergencyPhone.length < 10 || fields.emergencyPhone.length > 13) {
+    alert('Please enter a valid Emergency Contact Number (e.g. 09171234567).');
+    var el4 = document.getElementById('r-ec-phone'); if (el4) el4.focus();
+    return;
+  }
+  if (fields.emergencyPhone === fields.phone) {
+    alert('Your Emergency Contact Number should be a DIFFERENT person\'s number, not your own.');
+    var el5 = document.getElementById('r-ec-phone'); if (el5) el5.focus();
+    return;
+  }
+
   var btn1 = document.getElementById('submit-btn');
   var btn2 = document.querySelector('.sum-submit');
   function setLoading(on) {
@@ -2499,29 +2531,48 @@ function submitForm() {
   var fileInput = document.getElementById('r-proof');
   var file = fileInput && fileInput.files[0];
 
-  function doSubmit(proofBase64, proofMimeType) {
-    if (proofBase64) { fields.proofBase64 = proofBase64; fields.proofMimeType = proofMimeType; }
-
-    // Always save locally
+  function saveLocal(proofBase64) {
     var local = JSON.parse(localStorage.getItem('fr26_regs') || '[]');
     var entry = {};
     for (var k in fields) { if (k !== 'proofBase64') entry[k] = fields[k]; }
     entry.proofUrl = proofBase64 ? '[Uploaded - open admin to view]' : '';
     local.push(entry);
     localStorage.setItem('fr26_regs', JSON.stringify(local));
+  }
+
+  function doSubmit(proofBase64, proofMimeType) {
+    if (proofBase64) { fields.proofBase64 = proofBase64; fields.proofMimeType = proofMimeType; }
 
     // Try Google Apps Script
     if (SCRIPT_URL && SCRIPT_URL !== 'PASTE_YOUR_SCRIPT_URL_HERE') {
       fetch(SCRIPT_URL, {
         method: 'POST',
-        mode: 'no-cors',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(fields)
       })
-        .then(function() { setLoading(false); showSuccess(fields.fullName); })
-        .catch(function() { setLoading(false); showSuccess(fields.fullName); });
+        .then(function(r) { return r.json(); })
+        .then(function(res) {
+          setLoading(false);
+          if (res && res.result === 'duplicate') {
+            alert(res.message || 'It looks like this name or phone number is already registered. If you believe this is a mistake, please message us on Facebook.');
+            return;
+          }
+          if (res && res.result === 'error') {
+            alert(res.message || 'Sorry, your registration could not be processed. Please check your details and try again.');
+            return;
+          }
+          saveLocal(proofBase64);
+          showSuccess(fields.fullName);
+        })
+        .catch(function() {
+          // Network/CORS fallback: keep old behavior so registrations never get lost
+          setLoading(false);
+          saveLocal(proofBase64);
+          showSuccess(fields.fullName);
+        });
     } else {
       setLoading(false);
+      saveLocal(proofBase64);
       showSuccess(fields.fullName);
     }
   }
