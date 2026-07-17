@@ -2156,14 +2156,14 @@ nav{
 <label>Online Payment Type<span class="req">*</span></label>
 <select id="r-payment-online" onchange="updateOnlinePaymentUI()">
 <option value="">Select online payment type</option>
-<option>GCash</option>
+<option value="InstaPay QR">InstaPay QR (GCash / Maya / Bank App)</option>
 </select>
 </div>
 <div class="fg" id="gcash-qr-fg" style="display:none">
 <div class="gcash-qr">
-<div class="gcash-qr-title">Pay via GCash</div>
-<img loading="lazy" decoding="async" alt="GCash InstaPay QR code for AMML Fun Run 2026 payment" class="gcash-qr-img" src="assets/gcash-qr.png"/>
-<div class="gcash-qr-note">Scan this with your GCash app to pay your registration fee.<br/>Recipient: <b>JE***E C.</b> · <b>0997 601 ••••</b><br/>After paying, upload your proof of payment below.</div>
+<div class="gcash-qr-title">Pay via InstaPay QR</div>
+<img loading="lazy" decoding="async" alt="InstaPay QR code for AMML Fun Run 2026 registration payment" class="gcash-qr-img" src="assets/instapay-qr.png"/>
+<div class="gcash-qr-note">Scan this QR with your <b>GCash</b>, <b>Maya</b>, or any <b>bank app</b> (InstaPay) to pay your registration fee.<br/>Recipient: <b>JE***E C.</b> · Account: <b>••••-•••••••603-4</b><br/>After paying, upload your proof of payment below.</div>
 </div>
 </div>
 <div class="fg" id="proof-fg">
@@ -2351,7 +2351,7 @@ function updatePaymentUI() {
 function updateOnlinePaymentUI() {
   var onlineType = document.getElementById('r-payment-online').value;
   var qrFg = document.getElementById('gcash-qr-fg');
-  if (qrFg) qrFg.style.display = (onlineType === 'GCash') ? '' : 'none';
+  if (qrFg) qrFg.style.display = (onlineType === 'InstaPay QR') ? '' : 'none';
 }
 
 function consentBoxClick(cbId, openFn) {
