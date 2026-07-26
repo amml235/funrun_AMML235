@@ -2068,7 +2068,15 @@ nav{
 <h2 class="stitle">Register <span>Attendee</span></h2>
 <p class="sdesc">Fill in the form to secure your slot for AMML FUN RUN 2026.</p>
 </div>
-<div class="reg-layout reveal d1">
+<!-- REGISTRATION CLOSED. To REOPEN: delete the reg-closed-notice div, remove style="display:none" from reg-layout below, and set REGISTRATION_OPEN = true in the script. -->
+<div class="reveal d1" id="reg-closed-notice" style="max-width:720px;margin:0 auto;background:linear-gradient(160deg,#0d2818,#123524);border:2px solid #d4a53a;border-radius:16px;padding:44px 34px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,.35)">
+<div style="font-size:44px;line-height:1;margin-bottom:14px">🏁</div>
+<h3 style="color:#ffc928;font-size:26px;margin:0 0 12px;letter-spacing:1px">REGISTRATION IS NOW CLOSED</h3>
+<p style="color:#f5f0e1;font-size:16px;line-height:1.7;margin:0 0 10px">Maraming salamat sa lahat ng nag-register! Registration for the AMML 235 Fun Run 2026 has officially ended.</p>
+<p style="color:#cfe3d3;font-size:15px;line-height:1.7;margin:0 0 18px">Registered participants: watch out for announcements about race kit claiming on our Facebook page. See you at the starting line on <b style="color:#ffc928">August 1, 2026 — 4:00 AM</b>!</p>
+<p style="color:#9fb8a6;font-size:13.5px;margin:0">For concerns about your existing registration, message us on our Facebook page.</p>
+</div>
+<div class="reg-layout reveal d1" style="display:none">
 <!-- FORM PANEL -->
 <div class="reg-panel" id="reg-panel">
 <div class="rp-head"><h3>Register Attendee</h3></div>
@@ -2435,7 +2443,13 @@ document.addEventListener('DOMContentLoaded', function () {
   syncConsent();
 });
 
+var REGISTRATION_OPEN = false; // set to true to reopen registration
+
 function submitForm() {
+  if (!REGISTRATION_OPEN) {
+    alert('Registration is now closed. Thank you! For concerns, please message us on our Facebook page.');
+    return;
+  }
   var paymentMethod = getVal('r-payment');
   var onlineType    = getVal('r-payment-online');
   // Build a single human-readable payment field, e.g. "Online Payment - GCash" or "Cash"
